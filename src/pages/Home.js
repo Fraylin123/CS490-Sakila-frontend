@@ -38,14 +38,13 @@ function Home() {
             <h1>🎬 Sakila Movie Store</h1>
 
             <h2>Top 5 Rented Films</h2>
-            <div className="grid">
+            <div className="film-cards">
                 {topFilms.map(film => (
-                    <Link key={film.film_id} to={`/films/${film.film_id}`}>
-                        <div className="card">
-                            <h3>{film.title}</h3>
-                            <p>Rentals: {film.rental_count}</p>
-                        </div>
-                    </Link>
+                    <div className="film-card">
+                        <h3>{film.title}</h3>
+                        <p>Rentals: {film.rental_count}</p>
+                    </div>
+
                 ))}
             </div>
 
