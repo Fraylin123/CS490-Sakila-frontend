@@ -1,0 +1,35 @@
+h1{
+    text-align:center;
+}
+
+.film-cards{
+    display:flex;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+.film-card, .actor-card{
+    border: 2px solid black;
+    text-align:center;
+    width: 15%;
+    height: 300px;
+    padding: 20px;
+}
+
+.film-card button, .actor-card button{
+    width: 80px;
+    height: 40px;
+    background-color: #1e1e2f;
+    color: white;
+}
+
+.actor-cards{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+.film-icon, .actor-icon{
+    width: 100px;
+    height: 100px;
+}
