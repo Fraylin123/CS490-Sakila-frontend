@@ -25,7 +25,7 @@ function Home() {
 
     const fetchTopFilms = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/api/films/top-films");
+            const res = await axios.get("http://localhost:5000/api/films/top-films");
             setTopFilms(res.data);
         } catch (err) {
             console.error(err);
@@ -34,7 +34,7 @@ function Home() {
 
     const fetchTopActors = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/api/actors/top-actors");
+            const res = await axios.get("http://localhost:5000/api/actors/top-actors");
             setTopActors(res.data);
         } catch (err) {
             console.error(err);
@@ -44,7 +44,7 @@ function Home() {
 
     const openFilm = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:3000/api/films/${id}`);
+            const res = await axios.get(`http://localhost:5000/api/films/${id}`);
             setFilmData(res.data);
             setActorData(null);
             setModalType("film");
@@ -57,7 +57,7 @@ function Home() {
 
     const openActor = async (id, firstName, lastName) => {
     try {
-        const res = await axios.get(`http://localhost:3000/api/actors/${id}/top-films`);
+        const res = await axios.get(`http://localhost:5000/api/actors/${id}/top-films`);
 
         setActorData({
             name: `${firstName} ${lastName}`,
@@ -76,7 +76,7 @@ function Home() {
 
     return (
         <div>
-            <h1>Sakila Movie Store</h1>
+            <h1 style={{marginTop: "50px"}}>Sakila Movie Store</h1>
 
             <h2 style={{ textAlign: "center", marginTop: "50px" }}>Top 5 Rented Films</h2>
             <div className="film-cards">
@@ -97,6 +97,7 @@ function Home() {
                     <div key={actor.actor_id} className="actor-card">
                         <img className="actor-icon" src={user} alt="user icon" />
                         <h4>{actor.first_name} {actor.last_name}</h4>
+                        <p>Movie count: {actor.movie_count}</p>
                         <button onClick={() => openActor(actor.actor_id, actor.first_name, actor.last_name)}>View</button>
                     </div>
                 ))}

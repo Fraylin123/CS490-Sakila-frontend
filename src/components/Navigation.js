@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import "./Navigation.css"
 function Navigation(){
     return(
-        <nav className="navbar">
-            <div className="navbar-container">
+        <nav className="navigation-bar">
+            <div className="navigation-container">
 
             <div className="logo">
                 <Link to="/">Sakila</Link>

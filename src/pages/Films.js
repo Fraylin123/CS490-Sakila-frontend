@@ -20,9 +20,9 @@ function Films() {
       let url = "";
 
       if (search.trim() === "") {
-        url = `http://localhost:3000/api/films?page=${page}`;
+        url = `http://localhost:5000/api/films?page=${page}`;
       } else {
-        url = `http://localhost:3000/api/films/search?q=${search}&page=${page}`;
+        url = `http://localhost:5000/api/films/search?q=${search}&page=${page}`;
       }
 
       const res = await axios.get(url);
@@ -36,7 +36,7 @@ function Films() {
   const openFilm = async (id) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/films/${id}`
+        `http://localhost:5000/api/films/${id}`
       );
       setSelectedFilm(res.data);
       setShow(true);
@@ -121,9 +121,12 @@ function Films() {
               <p><strong>ID:</strong> {selectedFilm.film_id}</p>
               <p><strong>Description:</strong> {selectedFilm.description}</p>
               <p><strong>Release Year:</strong> {selectedFilm.release_year}</p>
+              <p><strong>Rental Rate:</strong> ${selectedFilm.rental_rate}</p>
+              <p><strong>Replacement Cost:</strong> ${selectedFilm.replacement_cost}</p>
               <p><strong>Rating:</strong> {selectedFilm.rating}</p>
               <p><strong>Length:</strong> {selectedFilm.length} mins</p>
               <p><strong>Rental Duration:</strong> {selectedFilm.rental_duration} days</p>
+              <p><strong>Special Features:</strong> {selectedFilm.special_features}</p>
             </>
           )}
         </Modal.Body>

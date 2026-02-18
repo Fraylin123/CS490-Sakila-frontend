@@ -27,6 +27,7 @@ h1{
     display: flex;
     justify-content: space-evenly;
     gap: 20px;
+    margin-bottom: 50px;
 }
 
 .film-icon, .actor-icon{

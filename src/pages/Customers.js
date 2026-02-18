@@ -13,7 +13,7 @@ function Customers() {
 
     const fetchCustomers = async () => {
         try {
-            const res = await axios.get(`http://localhost:3000/api/customers?page=${page}`);
+            const res = await axios.get(`http://localhost:5000/api/customers?page=${page}`);
             setCustomers(res.data);
         } catch (err) {
             console.error(err);
@@ -56,7 +56,7 @@ function Customers() {
                             <td>{customer.first_name}</td>
                             <td>{customer.last_name}</td>
                             <td>{customer.email}</td>
-                            <td>{customer.active}</td>
+                            <td>{customer.active == "1" ? "Yes" : "No"}</td>
                         </tr>
                     ))}
                 </tbody>
