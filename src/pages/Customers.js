@@ -14,6 +14,8 @@ function Customers() {
     });
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         fetchCustomers();
@@ -47,6 +49,18 @@ function Customers() {
         } catch (err) {
             setError(err.response?.data?.error || "Error adding customer");
             setMessage("");
+        }
+    };
+
+    const openCustomer = async (id) => {
+        try {
+            const res = await axios.get(`http://localhost:5000/api/customers/${id}`);
+
+            setSelectedCustomer(res.data);
+            setShow(true);
+
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -84,6 +98,7 @@ function Customers() {
                         <tr
                             key={customer.customer_id}
                             style={{ cursor: "pointer" }}
+                            onClick={() => openCustomer(customer.customer_id)}
                         >
                             <td>{customer.customer_id}</td>
                             <td>{customer.first_name}</td>
@@ -112,6 +127,57 @@ function Customers() {
                     Next
                 </Button>
             </div>
+            <Modal show={show} onHide={() => setShow(false)} size="lg" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {selectedCustomer?.customer.first_name}{" "}
+                        {selectedCustomer?.customer.last_name}{"'S Details"}
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {selectedCustomer && (
+                        <>
+                            <p><strong>ID:</strong> {selectedCustomer.customer.customer_id}</p>
+                            <p><strong>Email:</strong> {selectedCustomer.customer.email}</p>
+
+                            <h5 className="mt-4">Rental History</h5>
+                            <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                                <table className="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Rental ID</th>
+                                            <th>Film</th>
+                                            <th>Rental Date</th>
+                                            <th>Return Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selectedCustomer.rentals.map((rental, index) => (
+                                            <tr key={index}>
+                                                <td>{rental.rental_id}</td>
+                                                <td>{rental.title}</td>
+                                                <td>{new Date(rental.rental_date).toLocaleDateString()}</td>
+                                                <td>
+                                                    {rental.return_date
+                                                        ? new Date(rental.return_date).toLocaleDateString()
+                                                        : "—"}
+                                                </td>
+                                                <td>
+                                                    {rental.return_date
+                                                        ? <span className="badge bg-success">Returned</span>
+                                                        : <span className="badge bg-warning">Currently Rented</span>}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
+                    )}
+                </Modal.Body>
+            </Modal>
 
             <Modal show={showAdd} onHide={() => setShowAdd(false)} centered>
                 <Modal.Header closeButton>
