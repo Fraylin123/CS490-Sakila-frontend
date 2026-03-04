@@ -13,7 +13,15 @@ function Customers() {
 
     const fetchCustomers = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/customers?page=${page}`);
+            let url = "";
+
+            if (search.trim() === "") {
+                url = `http://localhost:5000/api/customers?page=${page}`;
+            } else {
+                url = `http://localhost:5000/api/customers/search?q=${search}&page=${page}`;
+            }
+
+            const res = await axios.get(url);
             setCustomers(res.data);
         } catch (err) {
             console.error(err);

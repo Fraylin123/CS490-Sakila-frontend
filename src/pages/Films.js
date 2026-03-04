@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
+import "./Films.css"
 
 function Films() {
 
@@ -9,6 +10,10 @@ function Films() {
   const [search, setSearch] = useState("");
   const [selectedFilm, setSelectedFilm] = useState(null);
   const [show, setShow] = useState(false);
+  const [customerID, setCustomerID] = useState(0);
+  const [error, setError] = useState("")
+  const [message, setMessage] = useState("")
+
 
   useEffect(() => {
     fetchFilms();
@@ -44,6 +49,20 @@ function Films() {
       console.error(err);
     }
   };
+
+  const rentFilm = async (customer_id, film_id) => {
+    try{
+      setError("");
+      setMessage("");
+      const res = await axios.post("http://localhost:5000/api/films/rent", {customer_id: customer_id, film_id: film_id})
+      setMessage(res.data.message);
+    } catch (err) {
+      setMessage("");
+      setError(err.response?.data?.error || "Error renting film");
+      console.error(err);
+    }
+
+  }
 
   return (
     <div className="container mt-4">
@@ -110,7 +129,7 @@ function Films() {
       </div>
 
       {/* FILM DETAILS MODAL */}
-      <Modal show={show} onHide={() => setShow(false)} size="lg" centered>
+      <Modal show={show} onHide={() => {setShow(false); setError(""); setMessage("")}} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>{selectedFilm?.title}</Modal.Title>
         </Modal.Header>
@@ -130,6 +149,15 @@ function Films() {
             </>
           )}
         </Modal.Body>
+        <Modal.Footer>
+          <div className="film-modal-footer">
+            <input type="number" placeholder="Enter customer ID" value={customerID} onChange={(e) => setCustomerID(e.target.value)}></input>
+            <button onClick={() => rentFilm(customerID, selectedFilm.film_id)}>Rent Movie</button>
+            {message && <p style={{ color: "green" }}>{message}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            
+          </div>
+        </Modal.Footer>
       </Modal>
 
     </div>
