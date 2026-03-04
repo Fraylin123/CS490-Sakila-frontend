@@ -64,6 +64,21 @@ function Customers() {
         }
     };
 
+    const returnFilm = async (rental_id) => {
+        try {
+            const res = await axios.put(`http://localhost:5000/api/customers/return/${rental_id}`);
+
+            setMessage(res.data.message);
+            setError("");
+
+            openCustomer(selectedCustomer.customer.customer_id);
+
+        } catch (err) {
+            setError(err.response?.data?.error || "Error returning film");
+            setMessage("");
+        }
+    };
+
     return (
         <div className="container mt-4">
             <h2>Customers</h2>
@@ -165,9 +180,19 @@ function Customers() {
                                                         : "—"}
                                                 </td>
                                                 <td>
-                                                    {rental.return_date
-                                                        ? <span className="badge bg-success">Returned</span>
-                                                        : <span className="badge bg-warning">Currently Rented</span>}
+                                                    {rental.return_date ? (
+                                                        <span className="badge bg-success">Returned</span>
+                                                    ) : (
+                                                        <>
+                                                            <span className="badge bg-warning me-2">Currently Rented</span>
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => returnFilm(rental.rental_id)}
+                                                            >
+                                                                Return
+                                                            </Button>
+                                                        </>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
