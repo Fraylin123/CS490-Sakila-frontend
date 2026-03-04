@@ -1,0 +1,9 @@
+.search-button-pair{
+    display:flex;
+    flex-direction:row;
+    gap: 10px;
+}
+
+.search-button-pair input{
+    width: 85%;
+}

@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
-
+import "./Customers.css"
 function Customers() {
     const [customers, setCustomers] = useState([])
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [showAdd, setShowAdd] = useState(false);
+    const [newCustomer, setNewCustomer] = useState({
+        first_name: "",
+        last_name: "",
+        email: ""
+    });
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
 
     useEffect(() => {
         fetchCustomers();
@@ -28,20 +36,37 @@ function Customers() {
         }
     };
 
+    const addCustomer = async () => {
+        try {
+            const res = await axios.post("http://localhost:5000/api/customers", newCustomer);
+            setMessage(res.data.message);
+            setError("");
+            setShowAdd(false);
+            fetchCustomers();
+
+        } catch (err) {
+            setError(err.response?.data?.error || "Error adding customer");
+            setMessage("");
+        }
+    };
+
     return (
         <div className="container mt-4">
             <h2>Customers</h2>
             {/* SEARCH */}
-            <input
-                type="text"
-                className="form-control mb-3"
-                placeholder="Search by id, first name, or last name..."
-                value={search}
-                onChange={(e) => {
-                    setPage(1);
-                    setSearch(e.target.value);
-                }}
-            />
+            <div className="search-button-pair">
+                <input
+                    type="text"
+                    className="form-control mb-3"
+                    placeholder="Search by id, first name, or last name..."
+                    value={search}
+                    onChange={(e) => {
+                        setPage(1);
+                        setSearch(e.target.value);
+                    }}
+                />
+                <Button className="mb-3" onClick={() => setShowAdd(true)}>Add Customer</Button>
+            </div>
             {/* TABLE */}
             <table className="table table-bordered table-hover">
                 <thead>
@@ -87,6 +112,56 @@ function Customers() {
                     Next
                 </Button>
             </div>
+
+            <Modal show={showAdd} onHide={() => setShowAdd(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New Customer</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <input
+                        type="text"
+                        placeholder="First Name"
+                        className="form-control mb-2"
+                        value={newCustomer.first_name}
+                        onChange={(e) =>
+                            setNewCustomer({ ...newCustomer, first_name: e.target.value })
+                        }
+                    />
+
+                    <input
+                        type="text"
+                        placeholder="Last Name"
+                        className="form-control mb-2"
+                        value={newCustomer.last_name}
+                        onChange={(e) =>
+                            setNewCustomer({ ...newCustomer, last_name: e.target.value })
+                        }
+                    />
+
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        className="form-control mb-2"
+                        value={newCustomer.email}
+                        onChange={(e) =>
+                            setNewCustomer({ ...newCustomer, email: e.target.value })
+                        }
+                    />
+
+                    {message && <p className="text-success">{message}</p>}
+                    {error && <p className="text-danger">{error}</p>}
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowAdd(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={addCustomer}>
+                        Add Customer
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
 
         </div>
