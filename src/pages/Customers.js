@@ -18,6 +18,7 @@ function Customers() {
     const [show, setShow] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editCustomer, setEditCustomer] = useState(null);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
     useEffect(() => {
         fetchCustomers();
@@ -99,6 +100,20 @@ function Customers() {
             setMessage("");
         }
     };
+
+    const deleteCustomer = async () => {
+        try {
+            await axios.delete(`http://localhost:5000/api/customers/${selectedCustomer.customer.customer_id}`);
+
+            setShow(false);
+            fetchCustomers();
+
+        } catch (err) {
+            alert(err.response?.data?.error || "Error deleting customer");
+        }
+
+
+    }
 
     return (
         <div className="container mt-4">
@@ -269,9 +284,17 @@ function Customers() {
                 <Modal.Footer>
 
                     {!isEditing ? (
-                        <Button variant="primary" onClick={() => setIsEditing(true)}>
-                            Edit
-                        </Button>
+                        <>
+                            <Button variant="primary" onClick={() => setIsEditing(true)}>
+                                Edit
+                            </Button>
+
+                            <Button variant="danger" onClick={() => setShowConfirmDelete(true)}>
+                                Delete
+                            </Button>
+                        </>
+
+
                     ) : (
                         <>
                             <Button variant="success" onClick={updateCustomer}>
@@ -337,6 +360,30 @@ function Customers() {
                     </Button>
                     <Button variant="primary" onClick={addCustomer}>
                         Add Customer
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showConfirmDelete} onHide={() => setShowConfirmDelete(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Deletion</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    Are you sure you want to permanently delete this customer?
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowConfirmDelete(false)}>
+                        Cancel
+                    </Button>
+
+                    <Button variant="danger" onClick={async () => {
+                        await deleteCustomer();
+                        setShowConfirmDelete(false);
+                    }}
+                    >
+                        Delete
                     </Button>
                 </Modal.Footer>
             </Modal>
