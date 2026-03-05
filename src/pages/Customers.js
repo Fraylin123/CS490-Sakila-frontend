@@ -16,6 +16,8 @@ function Customers() {
     const [error, setError] = useState("");
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [show, setShow] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editCustomer, setEditCustomer] = useState(null);
 
     useEffect(() => {
         fetchCustomers();
@@ -57,6 +59,8 @@ function Customers() {
             const res = await axios.get(`http://localhost:5000/api/customers/${id}`);
 
             setSelectedCustomer(res.data);
+            setEditCustomer(res.data.customer);
+            setIsEditing(false);
             setShow(true);
 
         } catch (err) {
@@ -75,6 +79,23 @@ function Customers() {
 
         } catch (err) {
             setError(err.response?.data?.error || "Error returning film");
+            setMessage("");
+        }
+    };
+
+    const updateCustomer = async () => {
+        try {
+            const res = await axios.put(`http://localhost:5000/api/customers/${editCustomer.customer_id}`, editCustomer);
+
+            setMessage(res.data.message);
+            setError("");
+            setIsEditing(false);
+
+            openCustomer(editCustomer.customer_id);
+            fetchCustomers();
+
+        } catch (err) {
+            setError(err.response?.data?.error || "Error updating customer");
             setMessage("");
         }
     };
@@ -153,8 +174,51 @@ function Customers() {
                 <Modal.Body>
                     {selectedCustomer && (
                         <>
-                            <p><strong>ID:</strong> {selectedCustomer.customer.customer_id}</p>
-                            <p><strong>Email:</strong> {selectedCustomer.customer.email}</p>
+                            <p><strong>ID:</strong> {editCustomer?.customer_id}</p>
+
+                            {isEditing ? (
+                                <>
+                                    <div className="mb-2">
+                                        <label className="form-label">First Name</label>
+                                        <input
+                                            className="form-control"
+                                            value={editCustomer.first_name}
+                                            onChange={(e) =>
+                                                setEditCustomer({ ...editCustomer, first_name: e.target.value })
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="mb-2">
+                                        <label className="form-label">Last Name</label>
+                                        <input
+                                            className="form-control"
+                                            value={editCustomer.last_name}
+                                            onChange={(e) =>
+                                                setEditCustomer({ ...editCustomer, last_name: e.target.value })
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="mb-2">
+                                        <label className="form-label">Email</label>
+                                        <input
+                                            className="form-control"
+                                            value={editCustomer.email}
+                                            onChange={(e) =>
+                                                setEditCustomer({ ...editCustomer, email: e.target.value })
+                                            }
+                                        />
+                                    </div>
+
+                                </>
+                            ) : (
+                                <>
+                                    <p><strong>First Name:</strong> {editCustomer?.first_name}</p>
+                                    <p><strong>Last Name:</strong> {editCustomer?.last_name}</p>
+                                    <p><strong>Email:</strong> {editCustomer?.email}</p>
+                                </>
+                            )}
 
                             <h5 className="mt-4">Rental History</h5>
                             <div style={{ maxHeight: "300px", overflowY: "auto" }}>
@@ -202,6 +266,29 @@ function Customers() {
                         </>
                     )}
                 </Modal.Body>
+                <Modal.Footer>
+
+                    {!isEditing ? (
+                        <Button variant="primary" onClick={() => setIsEditing(true)}>
+                            Edit
+                        </Button>
+                    ) : (
+                        <>
+                            <Button variant="success" onClick={updateCustomer}>
+                                Save
+                            </Button>
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => {
+                                    setIsEditing(false);
+                                    setEditCustomer(selectedCustomer.customer);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </>
+                    )}
+                </Modal.Footer>
             </Modal>
 
             <Modal show={showAdd} onHide={() => setShowAdd(false)} centered>
